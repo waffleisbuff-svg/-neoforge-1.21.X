@@ -1,5 +1,9 @@
 package net.sebz.tutorialmod;
 
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.CreativeModeTabs;
+import net.sebz.tutorialmod.block.ModBlocks;
+import net.sebz.tutorialmod.item.ModItems;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -24,11 +28,14 @@ public class TutorialMod {
     public static final Logger LOGGER = LogUtils.getLogger();
     public TutorialMod(IEventBus modEventBus, ModContainer modContainer) {
 
-
+        modEventBus.addListener(this::commonSetup);
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (ExampleMod) to respond directly to events.
         // Do not add this line if there are no @SubscribeEvent-annotated functions in this class, like onServerStarting() below.
         NeoForge.EVENT_BUS.register(this);
+
+        ModItems.register(modEventBus);
+        ModBlocks.register(modEventBus);
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
@@ -44,6 +51,10 @@ public class TutorialMod {
 
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
+        if(event.getTabKey() == CreativeModeTabs.INGREDIENTS){
+            event.accept((ModItems.BISMUTH));
+            event.accept(ModItems.RAW_BISMUTH);
+        }
 
     }
 
